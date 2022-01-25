@@ -7,6 +7,7 @@ class Result<T>{
   final String? message;
   final T? data;
 
+
   Result({
     required this.status,
     required this.message,

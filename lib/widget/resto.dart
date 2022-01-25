@@ -4,15 +4,15 @@ import 'package:dicoding_restaurant_app_sub2/data/model/restaurant_model.dart';
 import 'package:dicoding_restaurant_app_sub2/page/detail_restaurant_page.dart';
 import 'package:flutter/material.dart';
 
-class ListRestaurant extends StatefulWidget {
+class Resto extends StatefulWidget {
   final List<Restaurant> restaurant;
-  const ListRestaurant({Key? key, required this.restaurant}) : super(key: key);
+  const Resto({Key? key, required this.restaurant}) : super(key: key);
 
   @override
-  _ListRestaurant createState() => _ListRestaurant();
+  _Resto createState() => _Resto();
 }
 
-class _ListRestaurant extends State<ListRestaurant> {
+class _Resto extends State<Resto> {
 
   Widget _listitem(BuildContext context , Restaurant resto){
     return ListTile(

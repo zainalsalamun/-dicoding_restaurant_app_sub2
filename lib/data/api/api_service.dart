@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:dicoding_restaurant_app_sub2/data/model/restaurant_model.dart';
 import 'package:dicoding_restaurant_app_sub2/data/response/restaurant_response.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,6 +9,15 @@ const String baseUrl = "https://restaurant-api.dicoding.dev";
 class ApiService {
 
   static const _slash='/';
+
+  Future<Welcome> topHeadlines() async {
+    final response = await http.get(Uri.parse(baseUrl + _slash + 'list'));
+    if (response.statusCode == 200) {
+      return Welcome.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load top headlines');
+    }
+  }
 
   Future<RestaurantListResponse> getTopHeadLines() async{
     final response = await http.get(Uri.parse(baseUrl + _slash +'list'));

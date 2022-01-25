@@ -5,8 +5,9 @@ import 'package:dicoding_restaurant_app_sub2/data/model/restaurant_model.dart';
 import 'package:dicoding_restaurant_app_sub2/data/response/restaurant_response.dart';
 import 'package:dicoding_restaurant_app_sub2/provider/search_restaurant_provider.dart';
 import 'package:dicoding_restaurant_app_sub2/utils/result.dart';
-import 'package:dicoding_restaurant_app_sub2/widget/list_resturant.dart';
+import 'package:dicoding_restaurant_app_sub2/widget/list_restaurant.dart';
 import 'package:dicoding_restaurant_app_sub2/widget/platform_widget.dart';
+import 'package:dicoding_restaurant_app_sub2/widget/resto.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -83,7 +84,7 @@ class _RestaurantSearchState extends State<RestaurantSearch> {
                             child: Text('The search result is empty'),
                           );
                         }else{
-                          return ListRestaurant(restaurant: restaurants);
+                          return Resto(restaurant: restaurants);
                         }
                       }
                     }

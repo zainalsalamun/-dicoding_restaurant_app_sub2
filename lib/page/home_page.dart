@@ -1,10 +1,7 @@
 import 'package:dicoding_restaurant_app_sub2/component/theme.dart';
-import 'package:dicoding_restaurant_app_sub2/data/model/restaurant_model.dart';
-import 'package:dicoding_restaurant_app_sub2/data/response/restaurant_response.dart';
 import 'package:dicoding_restaurant_app_sub2/provider/restaurant_provider.dart';
 import 'package:dicoding_restaurant_app_sub2/page/search_restaurant_page.dart';
-import 'package:dicoding_restaurant_app_sub2/utils/result.dart';
-import 'package:dicoding_restaurant_app_sub2/widget/list_resturant.dart';
+import 'package:dicoding_restaurant_app_sub2/widget/list_restaurant.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +13,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController searchController = new TextEditingController();
+    String nameResto = 'namaRestaurant';
+
     Widget bottomNavBar() {
       return BottomNavigationBar(
         elevation: 20,
@@ -89,36 +89,57 @@ class HomePage extends StatelessWidget {
       ),
       bottomNavigationBar: bottomNavBar(),
       body: Consumer<RestaurantProvider>(
-        builder: (context, provider, _) {
-          Result<RestaurantListResponse> state = provider.state;
-          switch (state.status) {
-            case Status.loading:
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            case Status.error:
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(
-                    16.0,
-                  ),
-                  child: Text(
-                    state.message!,
-                  ),
-                ),
-              );
-            case Status.hasData:
-              {
-                List<Restaurant> restaurants = state.data!.restaurants;
-                if (restaurants.isEmpty) {
-                  return const Center(
-                    child: Text('Restaurant is empty.'),
-                  );
-                } else {
-                  return ListRestaurant(restaurant: restaurants,
-                  );
-                }
-              }
+        builder: (context, state, _) {
+          if (state.state == ResultState.Loading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state.state == ResultState.HasData) {
+            return Container(
+
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.only(top: 20),
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: SizedBox(
+                                    width: 1,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 5,
+                                  child: SizedBox(
+                                    width: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 100,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: state.result.restaurants.length,
+                                  itemBuilder: (context, index) {
+                                    var restaurant =
+                                    state.result.restaurants[index];
+                                    return ListRestaurant(restaurant: restaurant);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+
+          } else if (state.state == ResultState.NoData) {
+            return Center(child: Text(state.message));
+          } else if (state.state == ResultState.Error) {
+            return Center(child: Text(state.message));
+          } else {
+            return Center(child: Text(''));
           }
         },
       ),

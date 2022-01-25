@@ -1,42 +1,47 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:dicoding_restaurant_app_sub2/data/api/api_service.dart';
-import 'package:dicoding_restaurant_app_sub2/data/response/restaurant_response.dart';
-import 'package:dicoding_restaurant_app_sub2/utils/result.dart';
+import 'package:dicoding_restaurant_app_sub2/data/model/restaurant_model.dart';
 import 'package:flutter/material.dart';
 
 
-class RestaurantProvider extends ChangeNotifier{
+enum ResultState { Loading, NoData, HasData, Error }
+
+class RestaurantProvider extends ChangeNotifier {
   final ApiService apiService;
-  RestaurantProvider({required this.apiService}){
+
+  RestaurantProvider({required this.apiService}) {
     _fetchAllRestaurant();
   }
 
-  Result <RestaurantListResponse> _state = Result(status: Status.loading, message: null, data: null);
+  late Welcome _welcome;
+  late ResultState _state;
+  String _message = '';
 
-  Result<RestaurantListResponse> get state => _state;
+  String get message => _message;
 
+  Welcome get result => _welcome;
 
-  Future<dynamic> _fetchAllRestaurant() async{
-    try{
-      _state = Result(status: Status.loading, message: null, data: null);
+  ResultState get state => _state;
+
+  Future<dynamic> _fetchAllRestaurant() async {
+    try {
+      _state = ResultState.Loading;
       notifyListeners();
-      final RestaurantListResponse restaurantListResponse = await apiService.getTopHeadLines();
-      _state = Result(status: Status.hasData, message: null, data: restaurantListResponse);
+      final restaurant = await apiService.topHeadlines();
+      if (restaurant.restaurants.isEmpty) {
+        _state = ResultState.NoData;
+        notifyListeners();
+        return _message = 'Hasil pencarian tidak ditemukan';
+      } else {
+        _state = ResultState.HasData;
+        notifyListeners();
+        return _welcome = restaurant;
+      }
+    } catch (e) {
+      _state = ResultState.Error;
       notifyListeners();
-      return _state;
-    }on TimeoutException{
-      _state = Result(status: Status.error, message: 'Connection timeout, please try again!', data: null);
-      notifyListeners();
-      return _state;
-    } on SocketException{
-      _state = Result(status: Status.error, message: 'No internet, please check your internet!', data: null);
-      notifyListeners();
-      return _state;
-    }on Error catch (e){
-      _state = Result(status: Status.error, message: e.toString(), data: null);
-      notifyListeners();
-      return _state;
+      return _message =
+      'Terjadi kesalahan, cek koneksi internet anda';
     }
   }
 }
